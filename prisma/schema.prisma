@@ -1,0 +1,89 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int      @id @default(autoincrement())
+  nama          String
+  username      String?  @unique
+  email         String?  @unique
+  googleId      String?  @unique @map("google_id")
+  password      String?
+  role          String   @default("USER")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  reports       Report[]
+  statusChanges ReportStatusHistory[]
+
+  @@map("users")
+}
+
+model Category {
+  id           Int      @id @default(autoincrement())
+  namaKategori String   @unique @map("nama_kategori")
+
+  reports      Report[]
+
+  @@map("categories")
+}
+
+model Report {
+  id                 Int      @id @default(autoincrement())
+  userId             Int      @map("user_id")
+  categoryId         Int      @map("category_id")
+  namaBarang         String   @map("nama_barang")
+  jenisLaporan       String   @map("jenis_laporan")
+  deskripsi          String   @db.Text
+  lokasi             String
+  tanggalKejadian    DateTime @map("tanggal_kejadian")
+  foto               String?  @db.LongText
+  kontakPelapor      String?  @map("kontak_pelapor")
+  consentKontak      Boolean  @default(false) @map("consent_kontak")
+  status             String   @default("Menunggu Verifikasi")
+  createdAt          DateTime @default(now()) @map("created_at")
+
+  user               User     @relation(fields: [userId], references: [id])
+  category           Category @relation(fields: [categoryId], references: [id])
+  statusHistory      ReportStatusHistory[]
+  adminNotifications AdminNotification[]
+
+  @@index([namaBarang])
+  @@index([lokasi])
+  @@map("reports")
+}
+
+model ReportStatusHistory {
+  id               Int      @id @default(autoincrement())
+  reportId         Int      @map("report_id")
+  statusSebelumnya String?  @map("status_sebelumnya")
+  statusBaru       String   @map("status_baru")
+  catatan          String?  @db.Text
+  changedBy        Int?     @map("changed_by")
+  changedAt        DateTime @default(now()) @map("changed_at")
+  isRead           Boolean  @default(false) @map("is_read")
+
+  report           Report   @relation(fields: [reportId], references: [id])
+  user             User?    @relation(fields: [changedBy], references: [id])
+
+  @@map("report_status_history")
+}
+
+model AdminNotification {
+  id        Int      @id @default(autoincrement())
+  reportId  Int?     @map("report_id")
+  jenis     String
+  pesan     String   @db.Text
+  isRead    Boolean  @default(false) @map("is_read")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  report    Report?  @relation(fields: [reportId], references: [id], onDelete: SetNull)
+
+  @@index([isRead, createdAt])
+  @@map("admin_notifications")
+}
