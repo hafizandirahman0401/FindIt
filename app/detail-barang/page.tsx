@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Navbar from "../components/Navbar";
@@ -81,6 +81,22 @@ const barangContoh: Barang[] = [
 ];
 
 export default function DetailBarang() {
+  return (
+    <Suspense
+      fallback={
+        <main className="flex min-h-screen items-center justify-center bg-slate-50">
+          <p className="font-semibold text-blue-700">
+            Memuat detail barang...
+          </p>
+        </main>
+      }
+    >
+      <DetailBarangContent />
+    </Suspense>
+  );
+}
+
+function DetailBarangContent() {
   const searchParams = useSearchParams();
 
   const id = searchParams.get("id");
@@ -327,39 +343,39 @@ function Footer() {
             </p>
           </div>
 
-            <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm font-medium text-blue-100 sm:justify-start">
-              <Link href="/" className="transition hover:text-cyan-300">
-                Beranda
-              </Link>
+          <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm font-medium text-blue-100 sm:justify-start">
+            <Link href="/" className="transition hover:text-cyan-300">
+              Beranda
+            </Link>
 
-              <Link
-                href="/barang-hilang"
-                className="transition hover:text-cyan-300"
-              >
-                Barang Hilang
-              </Link>
+            <Link
+              href="/barang-hilang"
+              className="transition hover:text-cyan-300"
+            >
+              Barang Hilang
+            </Link>
 
-              <Link
-                href="/barang-temuan"
-                className="transition hover:text-cyan-300"
-              >
-                Barang Temuan
-              </Link>
+            <Link
+              href="/barang-temuan"
+              className="transition hover:text-cyan-300"
+            >
+              Barang Temuan
+            </Link>
 
-              <Link
-                href="/tentang-kami"
-                className="transition hover:text-cyan-300"
-              >
-                Tentang Kami
-              </Link>
+            <Link
+              href="/tentang-kami"
+              className="transition hover:text-cyan-300"
+            >
+              Tentang Kami
+            </Link>
 
-              <Link 
-                  href="/lapor" 
-                  className="transition hover:text-cyan-300"
-                >
-                  Buat Laporan
-                </Link>
-            </div>
+            <Link
+              href="/lapor"
+              className="transition hover:text-cyan-300"
+            >
+              Buat Laporan
+            </Link>
+          </div>
         </div>
 
         <div className="mt-9 border-t border-white/15 pt-6 text-center text-xs leading-6 text-blue-200 sm:text-sm">
