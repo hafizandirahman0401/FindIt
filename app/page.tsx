@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import LaporanTerbaru from "./components/LaporanTerbaru";
 import Navbar from "./components/Navbar";
 
