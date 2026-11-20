@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
@@ -149,6 +150,11 @@ export async function POST(request: Request) {
             : `Laporan barang temuan baru masuk: ${nama}. Lokasi: ${lokasi}.`,
       },
     });
+
+    // Perbarui halaman Beranda setelah laporan baru disimpan
+      revalidatePath("/");
+      revalidatePath("/barang-hilang");
+      revalidatePath("/barang-temuan");
 
     return NextResponse.json(
       {
